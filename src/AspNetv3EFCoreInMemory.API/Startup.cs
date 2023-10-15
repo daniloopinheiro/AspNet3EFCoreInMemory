@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace AspNetv3EFCoreInMemory.API
 {
@@ -33,7 +32,9 @@ namespace AspNetv3EFCoreInMemory.API
                 options.SwaggerDoc("v1", 
                 new OpenApiInfo
                 {
-                    Title = "WeatherForecast", Description = "Asp.Net v3, EF Core, InMemory", Version = "v1"
+                    Title = "Asp.Net EFCore InMemory", 
+                    Description = "Asp.Net v3, EF Core, InMemory", 
+                    Version = "v1"
                 });
             });
         }
@@ -45,7 +46,10 @@ namespace AspNetv3EFCoreInMemory.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                });
             }
 
             app.UseHttpsRedirection();

@@ -14,7 +14,7 @@ namespace AspNetv3EFCoreInMemory.API.Controllers
     {
         private readonly IWeatherForecastRepository _weatherForecastRepository;
         private readonly ILogger _logger;
-        public WeatherForecastController(IWeatherForecastRepository weatherForecastRepository, ILogger logger)
+        public WeatherForecastController(IWeatherForecastRepository weatherForecastRepository, ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
             _weatherForecastRepository = weatherForecastRepository;
