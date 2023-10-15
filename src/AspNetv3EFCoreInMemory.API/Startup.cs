@@ -1,4 +1,5 @@
 using AspNetv3EFCoreInMemory.API.Data;
+using AspNetv3EFCoreInMemory.API.Data.Cache;
 using AspNetv3EFCoreInMemory.API.Interfaces;
 using AspNetv3EFCoreInMemory.API.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace AspNetv3EFCoreInMemory.API
 {
@@ -16,15 +19,23 @@ namespace AspNetv3EFCoreInMemory.API
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase(databaseName: "ApiInMemoryDb"));
-            services.AddSwaggerGen();
+            services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("ApiInMemoryDb"));
+            services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
+
             services.AddControllers();
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", 
+                new OpenApiInfo
+                {
+                    Title = "WeatherForecast", Description = "Asp.Net v3, EF Core, InMemory", Version = "v1"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,10 +44,9 @@ namespace AspNetv3EFCoreInMemory.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
-
-            app.UseSwagger();
-            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
@@ -48,6 +58,8 @@ namespace AspNetv3EFCoreInMemory.API
             {
                 endpoints.MapControllers();
             });
+
+            WeatherForecastDb.WeatherForecastBuilder(app);
         }
     }
 }
